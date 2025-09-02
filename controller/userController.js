@@ -120,7 +120,12 @@ exports.getAllUser = async (req, res) => {
 exports.getUserByID = async (req, res) => {
   try {
     const id = req.params.id;
-
+    if (!id) {
+      return res.status(400).json({
+        status: "fail",
+        message: "User id is required",
+      });
+    }
     const user = await User.findById(id);
     if (!user) {
       return res.status(404).json({
@@ -144,7 +149,14 @@ exports.getUserByID = async (req, res) => {
 exports.updateUser = async (req, res) => {
   try {
     const id = req.params.id;
+
     const updates = req.body;
+    if (!id || !updates) {
+      return res.status(400).json({
+        status: "fail",
+        message: "user id or updates is required",
+      });
+    }
     const user = await User.findByIdAndUpdate(id, updates, {
       new: true,
       runValidators: true,
@@ -171,6 +183,12 @@ exports.updateUser = async (req, res) => {
 exports.deleteUser = async (req, res) => {
   try {
     const id = req.params.id;
+    if (!id) {
+      return res.status(400).json({
+        status: "fail",
+        message: "user id is required",
+      });
+    }
     const user = await User.findByIdAndDelete(id);
     if (!user) {
       return res.status(404).json({

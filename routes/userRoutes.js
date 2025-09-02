@@ -11,12 +11,11 @@ router.get(
   authentication.restrictTo("admin"),
   userController.getAllUser
 );
-router.get("/:id", userController.getUserByID);
+router.get("/:id", authentication.auth, userController.getUserByID);
 router.patch("/:id", userController.updateUser);
 router.delete(
   "/:id",
-  authentication.auth,
-  authentication.restrictTo("admin"),
+
   userController.deleteUser
 );
 module.exports = router;

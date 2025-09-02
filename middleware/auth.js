@@ -9,14 +9,21 @@ exports.auth = async (req, res, next) => {
       return res.status(401).json({ message: "You must login first" });
     }
 
-    const decoded = await promisify(jwt.verify)(
-      authorization,
-      process.env.JWT_SECRET
-    );
+    // Extract token from "Bearer <token>" format
+    const token = authorization.startsWith("Bearer ")
+      ? authorization.slice(7)
+      : authorization;
+
+    if (!token) {
+      return res.status(401).json({ message: "Invalid token format" });
+    }
+
+    const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
     req.role = decoded.role;
     req.user = decoded;
     next();
   } catch (error) {
+    console.error("JWT Error:", error.message);
     res.status(403).json({ message: "Invalid token" });
   }
 };
